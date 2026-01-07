@@ -21,10 +21,20 @@ server.tool(
   },
   async ({ command }) => {
     try {
-      // On Windows, git bash is typically at C:\Program Files\Git\bin\bash.exe
-      // But we'll try to use 'bash' assuming it's in PATH
-      const shell = process.platform === 'win32' ? 'C:\\Program Files\\Git\\bin\\bash.exe' : 'bash';
-      const { stdout, stderr } = await execAsync(command, { shell });
+      let execOptions = {};
+      if (process.platform === 'win32') {
+        // For Windows-specific commands like 'start', don't use bash shell
+        if (command.startsWith('start ')) {
+          // Use default shell (cmd.exe) for start commands
+          execOptions = {};
+        } else {
+          // Use git bash for other commands
+          execOptions = { shell: 'C:\\Program Files\\Git\\bin\\bash.exe' };
+        }
+      } else {
+        execOptions = { shell: 'bash' };
+      }
+      const { stdout, stderr } = await execAsync(command, execOptions);
       return {
         content: [
           {
@@ -87,12 +97,14 @@ server.tool(
   },
   async ({ phone, text }) => {
     try {
+      // Ensure phone starts with +
+      const formattedPhone = phone.startsWith('+') ? phone : `+${phone}`;
       // Encode the text for URL
       const encodedText = encodeURIComponent(text);
       // On Windows, use 'start' to open WhatsApp send URL
       const command = process.platform === 'win32'
-        ? `start whatsapp://send?phone=${phone}&text=${encodedText}`
-        : `open whatsapp://send?phone=${phone}&text=${encodedText}`;
+        ? `start whatsapp://send?phone=${formattedPhone}&text=${encodedText}`
+        : `open whatsapp://send?phone=${formattedPhone}&text=${encodedText}`;
       await execAsync(command);
       return {
         content: [
