@@ -78,6 +78,44 @@ server.tool(
   }
 );
 
+// Tool for sending WhatsApp message
+server.tool(
+  "send_whatsapp_message",
+  {
+    phone: z.string().describe("Phone number with country code (e.g., 1234567890)"),
+    text: z.string().describe("Message text to send"),
+  },
+  async ({ phone, text }) => {
+    try {
+      // Encode the text for URL
+      const encodedText = encodeURIComponent(text);
+      // On Windows, use 'start' to open WhatsApp send URL
+      const command = process.platform === 'win32'
+        ? `start whatsapp://send?phone=${phone}&text=${encodedText}`
+        : `open whatsapp://send?phone=${phone}&text=${encodedText}`;
+      await execAsync(command);
+      return {
+        content: [
+          {
+            type: "text",
+            text: `WhatsApp message prepared for ${phone}. Please review and send in the opened WhatsApp window.`,
+          },
+        ],
+      };
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `Error sending WhatsApp message: ${error.message}`,
+          },
+        ],
+        isError: true,
+      };
+    }
+  }
+);
+
 // Start receiving messages on stdin and sending messages on stdout
 const transport = new StdioServerTransport();
 await server.connect(transport);
