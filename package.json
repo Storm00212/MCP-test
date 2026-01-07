@@ -1,0 +1,14 @@
+{
+  "name": "mcp-git-whatsapp-server",
+  "version": "0.1.0",
+  "description": "MCP server for executing git bash commands and opening WhatsApp",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^0.4.0",
+    "zod": "^3.22.4"
+  }
+}
