@@ -103,7 +103,7 @@ server.tool(
       const encodedText = encodeURIComponent(text);
       // On Windows, use 'start' to open WhatsApp send URL
       const command = process.platform === 'win32'
-        ? `start "whatsapp://send?phone=${formattedPhone}&text=${encodedText}"`
+        ? `start "" "whatsapp://send?phone=${formattedPhone}&text=${encodedText}"`
         : `open whatsapp://send?phone=${formattedPhone}&text=${encodedText}`;
       await execAsync(command);
       return {
