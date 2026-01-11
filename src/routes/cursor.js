@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { exec } from 'child_process';
 import { promisify } from 'util';
-import { existsSync } from 'fs';
 
 const execAsync = promisify(exec);
 
@@ -12,22 +11,10 @@ export default (server) => {
       filePath: z.string().optional().describe("Optional path to a file or folder to open in Cursor"),
     },
     async ({ filePath }) => {
-      const cursorPath = 'C:\\Users\\User\\AppData\\Local\\Programs\\cursor\\Cursor.exe'; // Adjust if different
-      if (!existsSync(cursorPath)) {
-        return {
-          content: [
-            {
-              type: "text",
-              text: "Cursor is not installed or the executable path is incorrect.",
-            },
-          ],
-          isError: true,
-        };
-      }
       try {
         const command = process.platform === 'win32'
-          ? `start "" "${cursorPath}"${filePath ? ` "${filePath}"` : ''}`
-          : `cursor${filePath ? ` "${filePath}"` : ''}`; // Assuming cursor command on other platforms
+          ? `start cursor${filePath ? ` "${filePath}"` : ''}`
+          : `cursor${filePath ? ` "${filePath}"` : ''}`;
         await execAsync(command);
         console.error(`Launched Cursor at ${new Date().toISOString()}`);
         return {
@@ -43,7 +30,7 @@ export default (server) => {
           content: [
             {
               type: "text",
-              text: `Error opening Cursor: ${error.message}.`,
+              text: `Error opening Cursor: ${error.message}. It may not be installed or not in PATH.`,
             },
           ],
           isError: true,
