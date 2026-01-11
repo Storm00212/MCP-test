@@ -17,6 +17,7 @@
     "@langchain/openai": "^0.0.28",
     "@langchain/community": "^0.0.53",
     "faiss-node": "^0.5.1",
-    "pdf-parse": "^1.1.1"
+    "pdf-parse": "^1.1.1",
+    "chokidar": "^3.5.3"
   }
 }
