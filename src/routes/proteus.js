@@ -12,7 +12,7 @@ export default (server) => {
       filePath: z.string().optional().describe("Optional path to a Proteus project file to open"),
     },
     async ({ filePath }) => {
-      const proteusPath = 'C:\\Program Files (x86)\\Labcenter Electronics\\Proteus 8 Professional\\BIN\\PROTEUS.EXE';
+      const proteusPath = 'C:\\Program Files (x86)\\Labcenter Electronics\\Proteus 8 Professional\\BIN\\PDS.EXE';
       if (!existsSync(proteusPath)) {
         return {
           content: [
