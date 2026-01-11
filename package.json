@@ -8,16 +8,16 @@
     "start": "node src/index.js"
   },
   "dependencies": {
+    "@langchain/community": "^0.0.53",
+    "@langchain/openai": "^0.0.28",
     "@modelcontextprotocol/sdk": "^0.4.0",
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1",
-    "zod": "^3.22.4",
-    "zod-to-json-schema": "^3.25.1",
-    "langchain": "^0.1.36",
-    "@langchain/openai": "^0.0.28",
-    "@langchain/community": "^0.0.53",
+    "chokidar": "^3.6.0",
     "faiss-node": "^0.5.1",
+    "langchain": "^0.1.36",
     "pdf-parse": "^1.1.1",
-    "chokidar": "^3.5.3"
+    "zod": "^3.22.4",
+    "zod-to-json-schema": "^3.25.1"
   }
 }
