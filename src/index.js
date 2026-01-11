@@ -13,6 +13,7 @@ import matlab from './routes/matlab.js';
 import chrome from './routes/chrome.js';
 import cursor from './routes/cursor.js';
 import github from './routes/github.js';
+import rag from './routes/rag.js';
 
 // Create an MCP server
 const server = new McpServer({
@@ -31,6 +32,7 @@ matlab(server);
 chrome(server);
 cursor(server);
 github(server);
+rag(server);
 
 // Start receiving messages on stdin and sending messages on stdout
 const transport = new StdioServerTransport();
