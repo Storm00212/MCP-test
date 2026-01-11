@@ -6,37 +6,57 @@ import { OpenAIEmbeddings } from "@langchain/openai";
 import { FaissStore } from "langchain/vectorstores/faiss";
 import { RetrievalQAChain } from "langchain/chains";
 import { ChatOpenAI } from "@langchain/openai";
+import chokidar from "chokidar";
+import { existsSync } from "fs";
+import { mkdir } from "fs/promises";
 
+let splitDocs = [];
 let vectorStore = null;
 let chain = null;
+const VECTOR_STORE_PATH = './vector_store';
 
-async function initializeRAG() {
-  if (vectorStore) return; // Already initialized
-
+async function loadDocuments() {
   try {
-    console.error('Initializing RAG system...');
-
-    // Load documents from data folder
+    console.error('Loading documents from data folder...');
     const loader = new DirectoryLoader("data", {
       ".pdf": (path) => new PDFLoader(path),
     });
     const docs = await loader.load();
 
-    // Split documents
     const textSplitter = new RecursiveCharacterTextSplitter({
       chunkSize: 1000,
       chunkOverlap: 200,
     });
-    const splitDocs = await textSplitter.splitDocuments(docs);
+    splitDocs = await textSplitter.splitDocuments(docs);
+    console.error(`Loaded and split ${splitDocs.length} document chunks.`);
+    return splitDocs;
+  } catch (error) {
+    console.error('Error loading documents:', error);
+    throw error;
+  }
+}
 
-    // Create embeddings
+async function createEmbeddingsAndVectorStore() {
+  try {
+    console.error('Creating embeddings and vector store...');
     const embeddings = new OpenAIEmbeddings({
       openAIApiKey: process.env.OPENAI_API_KEY,
       modelName: "text-embedding-ada-002",
     });
 
-    // Create vector store
-    vectorStore = await FaissStore.fromDocuments(splitDocs, embeddings);
+    // Try to load existing vector store
+    if (existsSync(VECTOR_STORE_PATH)) {
+      vectorStore = await FaissStore.load(VECTOR_STORE_PATH, embeddings);
+      console.error('Loaded existing vector store.');
+    } else {
+      if (splitDocs.length === 0) {
+        await loadDocuments();
+      }
+      vectorStore = await FaissStore.fromDocuments(splitDocs, embeddings);
+      await mkdir(VECTOR_STORE_PATH, { recursive: true });
+      await vectorStore.save(VECTOR_STORE_PATH);
+      console.error('Created and saved new vector store.');
+    }
 
     // Create chain
     const model = new ChatOpenAI({
@@ -44,17 +64,92 @@ async function initializeRAG() {
       modelName: "gpt-3.5-turbo",
       temperature: 0,
     });
-
     chain = RetrievalQAChain.fromLLM(model, vectorStore.asRetriever());
-
-    console.error('RAG system initialized successfully.');
+    console.error('Vector store and chain ready.');
   } catch (error) {
-    console.error('Error initializing RAG:', error);
+    console.error('Error creating embeddings/vector store:', error);
     throw error;
   }
 }
 
+async function updateVectorStore() {
+  try {
+    console.error('Updating vector store due to file changes...');
+    await loadDocuments();
+    await createEmbeddingsAndVectorStore();
+    console.error('Vector store updated.');
+  } catch (error) {
+    console.error('Error updating vector store:', error);
+  }
+}
+
 export default (server) => {
+  // Start file watcher
+  const watcher = chokidar.watch('data', {
+    ignored: /(^|[\/\\])\../, // ignore dotfiles
+    persistent: true,
+  });
+
+  watcher.on('add', updateVectorStore);
+  watcher.on('change', updateVectorStore);
+  watcher.on('unlink', updateVectorStore);
+
+  server.tool(
+    "load_documents",
+    {},
+    async () => {
+      try {
+        await loadDocuments();
+        return {
+          content: [
+            {
+              type: "text",
+              text: `Loaded and split ${splitDocs.length} document chunks from data folder.`,
+            },
+          ],
+        };
+      } catch (error) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `Error loading documents: ${error.message}`,
+            },
+          ],
+          isError: true,
+        };
+      }
+    }
+  );
+
+  server.tool(
+    "create_vector_store",
+    {},
+    async () => {
+      try {
+        await createEmbeddingsAndVectorStore();
+        return {
+          content: [
+            {
+              type: "text",
+              text: "Embeddings and vector store created/loaded successfully.",
+            },
+          ],
+        };
+      } catch (error) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `Error creating vector store: ${error.message}`,
+            },
+          ],
+          isError: true,
+        };
+      }
+    }
+  );
+
   server.tool(
     "query_class_notes",
     {
@@ -63,14 +158,14 @@ export default (server) => {
     async ({ query }) => {
       try {
         if (!chain) {
-          await initializeRAG();
+          await createEmbeddingsAndVectorStore();
         }
         if (!chain) {
           return {
             content: [
               {
                 type: "text",
-                text: "RAG system not initialized. Please check OpenAI API key and data folder.",
+                text: "RAG system not ready. Please ensure documents are loaded and vector store is created.",
               },
             ],
             isError: true,
