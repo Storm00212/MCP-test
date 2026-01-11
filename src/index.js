@@ -12,6 +12,7 @@ import youtube from './routes/youtube.js';
 import matlab from './routes/matlab.js';
 import chrome from './routes/chrome.js';
 import cursor from './routes/cursor.js';
+import github from './routes/github.js';
 
 // Create an MCP server
 const server = new McpServer({
@@ -29,6 +30,7 @@ youtube(server);
 matlab(server);
 chrome(server);
 cursor(server);
+github(server);
 
 // Start receiving messages on stdin and sending messages on stdout
 const transport = new StdioServerTransport();
