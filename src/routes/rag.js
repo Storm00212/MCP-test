@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { OpenAIEmbeddings } from "@langchain/openai";
-import { FaissStore } from "langchain/vectorstores/faiss";
+import { FaissStore } from "@langchain/community/vectorstores/faiss";
 import { RetrievalQAChain } from "langchain/chains";
 import { ChatOpenAI } from "@langchain/openai";
 import { existsSync } from "fs";
