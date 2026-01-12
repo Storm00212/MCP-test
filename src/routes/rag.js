@@ -1,19 +1,46 @@
 import { z } from "zod";
-import { DirectoryLoader } from "langchain/document_loaders/fs/directory";
-import { PDFLoader } from "langchain/document_loaders/fs/pdf";
-import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import { OpenAIEmbeddings } from "@langchain/openai";
 import { FaissStore } from "langchain/vectorstores/faiss";
 import { RetrievalQAChain } from "langchain/chains";
 import { ChatOpenAI } from "@langchain/openai";
-import chokidar from "chokidar";
 import { existsSync } from "fs";
 import { mkdir } from "fs/promises";
+import https from "https";
+import { createWriteStream } from "fs";
 
-let splitDocs = [];
 let vectorStore = null;
 let chain = null;
-const VECTOR_STORE_PATH = './vector_store';
+const FAISS_INDEX_PATH = './faiss_index';
+const FAISS_INDEX_URL = 'https://drive.google.com/uc?export=download&id=1DLn9sEwbfmuAVsQBQ31hCrOTdyfY0_PX';
+const FAISS_PICKLE_URL = 'https://drive.google.com/uc?export=download&id=1t0pUILql00jqQ8CRzHwyjHQBQjiO-6kg';
+
+async function downloadFile(url, dest) {
+  return new Promise((resolve, reject) => {
+    const file = createWriteStream(dest);
+    https.get(url, (response) => {
+      response.pipe(file);
+      file.on('finish', () => {
+        file.close();
+        resolve();
+      });
+    }).on('error', (err) => {
+      reject(err);
+    });
+  });
+}
+
+async function downloadFaissIndices() {
+  try {
+    console.error('Downloading FAISS index files...');
+    await mkdir(FAISS_INDEX_PATH, { recursive: true });
+    await downloadFile(FAISS_INDEX_URL, `${FAISS_INDEX_PATH}/index.faiss`);
+    await downloadFile(FAISS_PICKLE_URL, `${FAISS_INDEX_PATH}/index.pkl`);
+    console.error('FAISS index files downloaded successfully.');
+  } catch (error) {
+    console.error('Error downloading FAISS indices:', error);
+    throw error;
+  }
+}
 
 async function loadDocuments() {
   try {
