@@ -42,48 +42,22 @@ async function downloadFaissIndices() {
   }
 }
 
-async function loadDocuments() {
-  try {
-    console.error('Loading documents from data folder...');
-    const loader = new DirectoryLoader("data", {
-      ".pdf": (path) => new PDFLoader(path),
-    });
-    const docs = await loader.load();
-
-    const textSplitter = new RecursiveCharacterTextSplitter({
-      chunkSize: 1000,
-      chunkOverlap: 200,
-    });
-    splitDocs = await textSplitter.splitDocuments(docs);
-    console.error(`Loaded and split ${splitDocs.length} document chunks.`);
-    return splitDocs;
-  } catch (error) {
-    console.error('Error loading documents:', error);
-    throw error;
-  }
-}
-
 async function createEmbeddingsAndVectorStore() {
   try {
-    console.error('Creating embeddings and vector store...');
+    console.error('Loading pre-built FAISS vector store...');
     const embeddings = new OpenAIEmbeddings({
       openAIApiKey: process.env.OPENAI_API_KEY,
       modelName: "text-embedding-ada-002",
     });
 
-    // Try to load existing vector store
-    if (existsSync(VECTOR_STORE_PATH)) {
-      vectorStore = await FaissStore.load(VECTOR_STORE_PATH, embeddings);
-      console.error('Loaded existing vector store.');
-    } else {
-      if (splitDocs.length === 0) {
-        await loadDocuments();
-      }
-      vectorStore = await FaissStore.fromDocuments(splitDocs, embeddings);
-      await mkdir(VECTOR_STORE_PATH, { recursive: true });
-      await vectorStore.save(VECTOR_STORE_PATH);
-      console.error('Created and saved new vector store.');
+    // Check if FAISS index files exist, if not download them
+    if (!existsSync(`${FAISS_INDEX_PATH}/index.faiss`) || !existsSync(`${FAISS_INDEX_PATH}/index.pkl`)) {
+      await downloadFaissIndices();
     }
+
+    // Load the pre-built FAISS vector store
+    vectorStore = await FaissStore.load(FAISS_INDEX_PATH, embeddings);
+    console.error('Loaded pre-built FAISS vector store.');
 
     // Create chain
     const model = new ChatOpenAI({
@@ -94,32 +68,12 @@ async function createEmbeddingsAndVectorStore() {
     chain = RetrievalQAChain.fromLLM(model, vectorStore.asRetriever());
     console.error('Vector store and chain ready.');
   } catch (error) {
-    console.error('Error creating embeddings/vector store:', error);
+    console.error('Error loading FAISS vector store:', error);
     throw error;
   }
 }
 
-async function updateVectorStore() {
-  try {
-    console.error('Updating vector store due to file changes...');
-    await loadDocuments();
-    await createEmbeddingsAndVectorStore();
-    console.error('Vector store updated.');
-  } catch (error) {
-    console.error('Error updating vector store:', error);
-  }
-}
-
 export default (server) => {
-  // Start file watcher
-  const watcher = chokidar.watch('data', {
-    ignored: /(^|[\/\\])\../, // ignore dotfiles
-    persistent: true,
-  });
-
-  watcher.on('add', updateVectorStore);
-  watcher.on('change', updateVectorStore);
-  watcher.on('unlink', updateVectorStore);
 
   server.tool(
     "load_documents",
