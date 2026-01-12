@@ -76,35 +76,7 @@ async function createEmbeddingsAndVectorStore() {
 export default (server) => {
 
   server.tool(
-    "load_documents",
-    {},
-    async () => {
-      try {
-        await loadDocuments();
-        return {
-          content: [
-            {
-              type: "text",
-              text: `Loaded and split ${splitDocs.length} document chunks from data folder.`,
-            },
-          ],
-        };
-      } catch (error) {
-        return {
-          content: [
-            {
-              type: "text",
-              text: `Error loading documents: ${error.message}`,
-            },
-          ],
-          isError: true,
-        };
-      }
-    }
-  );
-
-  server.tool(
-    "create_vector_store",
+    "load_vector_store",
     {},
     async () => {
       try {
@@ -113,7 +85,7 @@ export default (server) => {
           content: [
             {
               type: "text",
-              text: "Embeddings and vector store created/loaded successfully.",
+              text: "Pre-built FAISS vector store loaded successfully.",
             },
           ],
         };
@@ -122,7 +94,7 @@ export default (server) => {
           content: [
             {
               type: "text",
-              text: `Error creating vector store: ${error.message}`,
+              text: `Error loading vector store: ${error.message}`,
             },
           ],
           isError: true,
