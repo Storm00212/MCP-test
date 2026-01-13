@@ -36,6 +36,7 @@ async function downloadFaissIndices() {
     await mkdir(FAISS_INDEX_PATH, { recursive: true });
     await downloadFile(FAISS_INDEX_URL, `${FAISS_INDEX_PATH}/index.faiss`);
     await downloadFile(FAISS_PICKLE_URL, `${FAISS_INDEX_PATH}/index.pkl`);
+    await downloadFile(FAISS_DOCSTORE_URL, `${FAISS_INDEX_PATH}/docstore.json`);
     console.error('FAISS index files downloaded successfully.');
   } catch (error) {
     console.error('Error downloading FAISS indices:', error);
@@ -52,7 +53,7 @@ async function createEmbeddingsAndVectorStore() {
     });
 
     // Check if FAISS index files exist, if not download them
-    if (!existsSync(`${FAISS_INDEX_PATH}/index.faiss`) || !existsSync(`${FAISS_INDEX_PATH}/index.pkl`)) {
+    if (!existsSync(`${FAISS_INDEX_PATH}/index.faiss`) || !existsSync(`${FAISS_INDEX_PATH}/index.pkl`) || !existsSync(`${FAISS_INDEX_PATH}/docstore.json`)) {
       await downloadFaissIndices();
     }
 
