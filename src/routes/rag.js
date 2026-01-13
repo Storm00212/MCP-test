@@ -13,6 +13,7 @@ let chain = null;
 const FAISS_INDEX_PATH = './faiss_index';
 const FAISS_INDEX_URL = 'https://drive.google.com/uc?export=download&id=1DLn9sEwbfmuAVsQBQ31hCrOTdyfY0_PX';
 const FAISS_PICKLE_URL = 'https://drive.google.com/uc?export=download&id=1t0pUILql00jqQ8CRzHwyjHQBQjiO-6kg';
+const FAISS_DOCSTORE_URL = 'https://drive.google.com/uc?export=download&id=1gvLuel8zjv4GMpSfLb5OrDKruvxbFZpl';
 
 async function downloadFile(url, dest) {
   return new Promise((resolve, reject) => {
