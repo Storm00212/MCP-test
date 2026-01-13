@@ -34,7 +34,7 @@ async function downloadFaissIndices() {
   try {
     console.error('Downloading FAISS index files...');
     await mkdir(FAISS_INDEX_PATH, { recursive: true });
-    await downloadFile(FAISS_INDEX_URL, `${FAISS_INDEX_PATH}/index.faiss`);
+    await downloadFile(FAISS_INDEX_URL, `${FAISS_INDEX_PATH}/faiss.index`);
     await downloadFile(FAISS_PICKLE_URL, `${FAISS_INDEX_PATH}/index.pkl`);
     await downloadFile(FAISS_DOCSTORE_URL, `${FAISS_INDEX_PATH}/docstore.json`);
     console.error('FAISS index files downloaded successfully.');
@@ -52,10 +52,23 @@ async function createEmbeddingsAndVectorStore() {
       modelName: "text-embedding-ada-002",
     });
 
-    // Check if FAISS index files exist, if not download them
-    if (!existsSync(`${FAISS_INDEX_PATH}/index.faiss`) || !existsSync(`${FAISS_INDEX_PATH}/index.pkl`) || !existsSync(`${FAISS_INDEX_PATH}/docstore.json`)) {
-      await downloadFaissIndices();
+    // Check if FAISS index files exist and have content, if not download them
+    const fs = await import('fs/promises');
+    let needsDownload = false;
+    try {
+      const faissStat = await fs.stat(`${FAISS_INDEX_PATH}/faiss.index`);
+      const pklStat = await fs.stat(`${FAISS_INDEX_PATH}/index.pkl`);
+      const jsonStat = await fs.stat(`${FAISS_INDEX_PATH}/docstore.json`);
+      if (faissStat.size === 0 || pklStat.size === 0 || jsonStat.size === 0) {
+        needsDownload = true;
+      }
+    } catch (error) {
+      needsDownload = true;
     }
+
+    // if (needsDownload) {
+    //   await downloadFaissIndices();
+    // }
 
     // Load the pre-built FAISS vector store
     vectorStore = await FaissStore.load(FAISS_INDEX_PATH, embeddings);
