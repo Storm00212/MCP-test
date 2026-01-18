@@ -1,7 +1,8 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
 import path from 'path';
 import { spawn } from 'child_process';
-import { Client, StdioClientTransport } from '@modelcontextprotocol/sdk';
+import { Client } from '@modelcontextprotocol/sdk/client';
+import { StdioClientTransport } from '@modelcontextprotocol/sdk/client';
 let mainWindow;
 
 let mcpProcess;
