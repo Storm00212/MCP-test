@@ -2,7 +2,7 @@
   "name": "electron-app",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/main.js",
+  "main": "dist/main.cjs",
   "scripts": {
     "build": "node_modules\\.bin\\webpack --mode production && copy src\\main.js dist\\main.js",
     "dev": "node_modules\\.bin\\webpack --mode development --watch",
