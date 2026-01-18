@@ -29,6 +29,10 @@ app.whenReady().then(async () => {
     stdio: ['pipe', 'pipe', 'pipe']
   });
 
+  // Dynamically import MCP SDK
+  const { Client } = await import('@modelcontextprotocol/sdk/client');
+  const { StdioClientTransport } = await import('@modelcontextprotocol/sdk/client');
+
   // Set up MCP client
   client = new Client({
     name: 'electron-client',
