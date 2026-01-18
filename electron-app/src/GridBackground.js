@@ -38,9 +38,6 @@ const GridBackground = () => {
           y1={i * 54}
           x2="1920"
           y2={i * 54}
-          stroke="#00ff00"
-          strokeWidth="1"
-          opacity="0.3"
         />
       ))}
       {/* Vertical lines */}
