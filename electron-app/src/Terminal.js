@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
+import anime from 'animejs';
 
 const { ipcRenderer } = require('electron');
 
@@ -13,6 +14,19 @@ const Terminal = ({
   recognitionRef,
   toggleVoiceRecognition
 }) => {
+  const errorRef = useRef();
+
+  useEffect(() => {
+    if (errorRef.current) {
+      anime({
+        targets: errorRef.current,
+        color: ['#ff0000', '#ffffff', '#ff0000'],
+        duration: 600,
+        easing: 'easeInOutQuad',
+        loop: 2
+      });
+    }
+  }, [output]);
 
   const handleInputChange = (e) => {
     setInput(e.target.value);
@@ -44,9 +58,14 @@ const Terminal = ({
   return (
     <div className="terminal">
       <div className="terminal-output">
-        {output.map((line, index) => (
-          <div key={index}>{line}</div>
-        ))}
+        {output.map((line, index) => {
+          const isError = line.startsWith('Error:') || line.startsWith('IPC Error:') || line.startsWith('Speech recognition error:');
+          return (
+            <div key={index} className={isError ? 'error-line' : ''} ref={isError ? errorRef : null}>
+              {line}
+            </div>
+          );
+        })}
       </div>
       <div className="terminal-input">
         <span>{'>'}</span>
