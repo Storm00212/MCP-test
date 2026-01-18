@@ -56,7 +56,11 @@ app.whenReady().then(async () => {
       });
       return result;
     } catch (error) {
-      return { error: error.message };
+      let errorMsg = error.message;
+      if (errorMsg.toLowerCase().includes('tool') && errorMsg.toLowerCase().includes('not found')) {
+        errorMsg = 'Unknown tool';
+      }
+      return { error: errorMsg };
     }
   });
 });
