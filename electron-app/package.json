@@ -4,9 +4,9 @@
   "description": "",
   "main": "dist/main.cjs",
   "scripts": {
-    "build": "node_modules\\.bin\\webpack --mode production && copy src\\main.js dist\\main.js",
+    "build": "node_modules\\.bin\\webpack --mode production && copy src\\main.cjs dist\\main.cjs",
     "dev": "node_modules\\.bin\\webpack --mode development --watch",
-    "start": "electron dist/main.js",
+    "start": "electron dist/main.cjs",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
