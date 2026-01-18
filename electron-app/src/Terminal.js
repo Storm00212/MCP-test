@@ -1,13 +1,18 @@
-import React, { useState, useRef } from 'react';
+import React from 'react';
 
 const { ipcRenderer } = require('electron');
 
-const Terminal = () => {
-  const [output, setOutput] = useState(['Welcome to the Futuristic Terminal']);
-  const [input, setInput] = useState('');
-  const [isListening, setIsListening] = useState(false);
-  const inputRef = useRef(null);
-  const recognitionRef = useRef(null);
+const Terminal = ({
+  output,
+  setOutput,
+  input,
+  setInput,
+  isListening,
+  setIsListening,
+  inputRef,
+  recognitionRef,
+  toggleVoiceRecognition
+}) => {
 
   const handleInputChange = (e) => {
     setInput(e.target.value);
@@ -33,41 +38,6 @@ const Terminal = () => {
         setInput('');
         inputRef.current.focus();
       }
-    }
-  };
-
-  const toggleVoiceRecognition = () => {
-    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-      setOutput(prev => [...prev, 'Speech recognition not supported in this browser.']);
-      return;
-    }
-    if (isListening) {
-      recognitionRef.current.stop();
-      setIsListening(false);
-    } else {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      const recognition = new SpeechRecognition();
-      recognition.continuous = false;
-      recognition.interimResults = false;
-      recognition.lang = 'en-US';
-      recognition.onstart = () => {
-        setIsListening(true);
-      };
-      recognition.onresult = (event) => {
-        const transcript = event.results[0][0].transcript;
-        setInput(transcript);
-        inputRef.current.focus();
-      };
-      recognition.onend = () => {
-        setIsListening(false);
-      };
-      recognition.onerror = (event) => {
-        console.error('Speech recognition error:', event.error);
-        setIsListening(false);
-        setOutput(prev => [...prev, `Speech recognition error: ${event.error}`]);
-      };
-      recognition.start();
-      recognitionRef.current = recognition;
     }
   };
 
