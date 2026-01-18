@@ -1,6 +1,8 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
-const path = require('path');
-const { spawn } = require('child_process');
+import { app, BrowserWindow, ipcMain } from 'electron';
+import path from 'path';
+import { spawn } from 'child_process';
+import { Client } from '@modelcontextprotocol/sdk/client';
+import { StdioClientTransport } from '@modelcontextprotocol/sdk/client';
 let mainWindow;
 
 let mcpProcess;
