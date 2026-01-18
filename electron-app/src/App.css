@@ -78,6 +78,10 @@ body {
   flex: 1;
 }
 
+.error-line {
+  color: red;
+}
+
 /* Data Stream */
 .data-stream {
   position: absolute;
