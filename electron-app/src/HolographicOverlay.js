@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 
-const HolographicOverlay = () => {
+const HolographicOverlay = (props) => {
   const mountRef = useRef(null);
 
   useEffect(() => {
@@ -17,7 +17,7 @@ const HolographicOverlay = () => {
     // Geometry and material for holographic effect
     const geometry = new THREE.BoxGeometry(1, 1, 1);
     const material = new THREE.MeshBasicMaterial({
-      color: 0x00ff00,
+      color: new THREE.Color(props.accentColor || '#00ff00'),
       wireframe: true,
       transparent: true,
       opacity: 0.5,
