@@ -17,7 +17,7 @@ function createWindow() {
     }
   });
 
-  mainWindow.loadFile('public/index.html');
+  mainWindow.loadFile('dist/index.html');
 }
 
 app.whenReady().then(async () => {
