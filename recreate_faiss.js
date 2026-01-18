@@ -13,19 +13,23 @@ async function recreateFaissIndex() {
   try {
     console.log('Recreating FAISS index from data folder...');
 
-    // Load documents
+    // Load documents (limit to first few for testing)
     const loader = new DirectoryLoader("data", {
       ".pdf": (path) => new PDFLoader(path),
     });
     const docs = await loader.load();
     console.log(`Loaded ${docs.length} documents`);
 
+    // Limit to first 10 documents for testing
+    const limitedDocs = docs.slice(0, 10);
+    console.log(`Using first ${limitedDocs.length} documents for testing`);
+
     // Split documents
     const textSplitter = new RecursiveCharacterTextSplitter({
       chunkSize: 1000,
       chunkOverlap: 200,
     });
-    const splitDocs = await textSplitter.splitDocuments(docs);
+    const splitDocs = await textSplitter.splitDocuments(limitedDocs);
     console.log(`Split into ${splitDocs.length} chunks`);
 
     // Create embeddings
