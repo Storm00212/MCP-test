@@ -1,8 +1,9 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
-import path from 'path';
-import { spawn } from 'child_process';
-import { Client } from '@modelcontextprotocol/sdk/client';
-import { StdioClientTransport } from '@modelcontextprotocol/sdk/client';
+const electron = require('electron');
+const app = electron.app;
+const BrowserWindow = electron.BrowserWindow;
+const ipcMain = electron.ipcMain;
+const path = require('path');
+const { spawn } = require('child_process');
 let mainWindow;
 
 let mcpProcess;
@@ -27,9 +28,13 @@ app.whenReady().then(async () => {
 
   // Spawn MCP server as child process
   mcpProcess = spawn('node', ['../src/index.js'], {
-    cwd: path.join(process.cwd(), '..'),
+    cwd: path.join(__dirname, '..'),
     stdio: ['pipe', 'pipe', 'pipe']
   });
+
+  // Dynamically import MCP SDK
+  const { Client } = await import('@modelcontextprotocol/sdk/client');
+  const { StdioClientTransport } = await import('@modelcontextprotocol/sdk/client');
 
   // Set up MCP client
   client = new Client({
