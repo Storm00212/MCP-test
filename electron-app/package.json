@@ -6,7 +6,7 @@
   "scripts": {
     "build": "node_modules\\.bin\\webpack --mode production && copy src\\main.js dist\\main.js",
     "dev": "node_modules\\.bin\\webpack --mode development --watch",
-    "start": "electron dist/main.cjs",
+    "start": "electron dist/main.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
