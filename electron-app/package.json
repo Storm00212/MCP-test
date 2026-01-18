@@ -17,7 +17,6 @@
     "@modelcontextprotocol/sdk": "^1.25.2",
     "animejs": "^4.2.2",
     "concurrently": "^9.2.1",
-    "electron": "^40.0.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "three": "^0.182.0"
