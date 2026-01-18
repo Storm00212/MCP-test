@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import './App.css';
-import GridBackground from './GridBackground';
-import HolographicOverlay from './HolographicOverlay';
-import Terminal from './Terminal';
-import DataStream from './DataStream';
+import GridBackground from './GridBackground.js';
+import HolographicOverlay from './HolographicOverlay.js';
+import Terminal from './Terminal.js';
+import DataStream from './DataStream.js';
 const { ipcRenderer } = require('electron');
 
 const themes = {
