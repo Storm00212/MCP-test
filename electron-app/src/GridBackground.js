@@ -11,7 +11,7 @@ const GridBackground = () => {
     // Animate grid lines for matrix-like effect
     anime({
       targets: lines,
-      strokeDashoffset: [anime.setDashoffset, 0],
+      strokeDashoffset: [100, 0],
       easing: 'easeInOutSine',
       duration: 2000,
       delay: anime.stagger(100),
