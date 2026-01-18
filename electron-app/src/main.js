@@ -27,13 +27,9 @@ app.whenReady().then(async () => {
 
   // Spawn MCP server as child process
   mcpProcess = spawn('node', ['../src/index.js'], {
-    cwd: path.join(__dirname, '..'),
+    cwd: path.join(process.cwd(), '..'),
     stdio: ['pipe', 'pipe', 'pipe']
   });
-
-  // Dynamically import MCP SDK
-  const { Client } = await import('@modelcontextprotocol/sdk/client');
-  const { StdioClientTransport } = await import('@modelcontextprotocol/sdk/client');
 
   // Set up MCP client
   client = new Client({
