@@ -40,6 +40,7 @@ function createWindow() {
 }
 
 setTimeout(() => {
+  console.log('global.electron:', global.electron);
   const electron = require('electron');
   console.log('electron:', electron);
   const { app, BrowserWindow, ipcMain } = electron;
