@@ -1,6 +1,8 @@
-const app = require('electron').app;
-const BrowserWindow = require('electron').BrowserWindow;
-const ipcMain = require('electron').ipcMain;
+const electron = require('electron');
+console.log('electron:', electron);
+const app = electron.app;
+const BrowserWindow = electron.BrowserWindow;
+const ipcMain = electron.ipcMain;
 const path = require('path');
 const { spawn } = require('child_process');
 let mainWindow;
