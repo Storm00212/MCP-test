@@ -18,6 +18,7 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
+    show: true,
     webPreferences: {
       nodeIntegration: true, // For React require, will change to false later with preload
       contextIsolation: false
@@ -25,6 +26,7 @@ function createWindow() {
   });
 
   mainWindow.loadFile(path.join(__dirname, '../dist/index.html'));
+  mainWindow.webContents.openDevTools();
 }
 
 setTimeout(() => {
