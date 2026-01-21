@@ -1,8 +1,13 @@
+import { app, BrowserWindow, ipcMain } from 'electron';
+import path from 'path';
+import { spawn } from 'child_process';
+
 console.log('process.type:', process.type);
 console.log('process.versions.electron:', process.versions.electron);
 console.log('global.app:', global.app);
-const path = require('path');
-const { spawn } = require('child_process');
+console.log('app:', app);
+console.log('BrowserWindow:', BrowserWindow);
+console.log('ipcMain:', ipcMain);
 let mainWindow;
 
 let mcpProcess;
@@ -40,13 +45,6 @@ function createWindow() {
 }
 
 setTimeout(() => {
-  console.log('global.electron:', global.electron);
-  const app = require('app');
-  console.log('app:', app);
-  const BrowserWindow = require('browser-window');
-  console.log('BrowserWindow:', BrowserWindow);
-  const ipcMain = require('ipc-main');
-  console.log('ipcMain:', ipcMain);
   console.log('delayed app:', app);
   app.on('ready', async () => {
     console.log('App ready event fired');
