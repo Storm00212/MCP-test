@@ -1,6 +1,12 @@
-const electron = require('electron');
-console.log('electron:', electron);
-const app = electron.app;
+try {
+  const electron = require('electron');
+  console.log('electron:', electron);
+  var app = electron.app;
+  var BrowserWindow = electron.BrowserWindow;
+  var ipcMain = electron.ipcMain;
+} catch (e) {
+  console.error('Error requiring electron:', e);
+}
 const BrowserWindow = electron.BrowserWindow;
 const ipcMain = electron.ipcMain;
 const path = require('path');
