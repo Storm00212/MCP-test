@@ -1,10 +1,6 @@
 console.log('process.type:', process.type);
 console.log('process.versions.electron:', process.versions.electron);
 console.log('global.app:', global.app);
-const electron = require('electron');
-console.log('electron:', electron);
-const { app, BrowserWindow, ipcMain } = electron;
-console.log('app:', app);
 const path = require('path');
 const { spawn } = require('child_process');
 let mainWindow;
@@ -44,6 +40,10 @@ function createWindow() {
 }
 
 setTimeout(() => {
+  const electron = require('electron');
+  console.log('electron:', electron);
+  const { app, BrowserWindow, ipcMain } = electron;
+  console.log('app:', app);
   console.log('delayed app:', app);
   app.on('ready', async () => {
     console.log('App ready event fired');
