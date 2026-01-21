@@ -1,5 +1,7 @@
 const electron = require('electron');
+console.log('electron:', electron);
 const app = electron.app;
+console.log('app:', app);
 const BrowserWindow = electron.BrowserWindow;
 const ipcMain = electron.ipcMain;
 const path = require('path');
