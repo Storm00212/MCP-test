@@ -1,6 +1,5 @@
-const electron = require('electron');
-console.log('electron keys:', Object.keys(electron));
-const { app, BrowserWindow, ipcMain } = electron;
+console.log('global.app:', global.app);
+const { app, BrowserWindow, ipcMain } = require('electron');
 console.log('app:', app);
 const path = require('path');
 const { spawn } = require('child_process');
