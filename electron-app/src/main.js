@@ -23,7 +23,7 @@ function createWindow() {
   mainWindow.loadFile('dist/index.html');
 }
 
-app.whenReady().then(async () => {
+app.on('ready', async () => {
   createWindow();
 
   // Spawn MCP server as child process
