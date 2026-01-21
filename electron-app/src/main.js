@@ -98,10 +98,10 @@ setTimeout(() => {
       return { error: errorMsg };
     }
   });
+
+  app.on('window-all-closed', () => {
+    if (mcpProcess) mcpProcess.kill();
+    if (process.platform !== 'darwin') app.quit();
+  });
 });
 }, 1000);
-
-app.on('window-all-closed', () => {
-  if (mcpProcess) mcpProcess.kill();
-  if (process.platform !== 'darwin') app.quit();
-});
