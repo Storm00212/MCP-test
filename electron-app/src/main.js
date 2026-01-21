@@ -1,3 +1,4 @@
+console.log('process.type:', process.type);
 console.log('global.app:', global.app);
 const { app, BrowserWindow, ipcMain } = require('electron');
 console.log('app:', app);
