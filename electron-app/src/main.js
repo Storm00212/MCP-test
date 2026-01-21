@@ -27,8 +27,10 @@ function createWindow() {
   mainWindow.loadFile(path.join(__dirname, '../dist/index.html'));
 }
 
-app.on('ready', async () => {
-  createWindow();
+setTimeout(() => {
+  console.log('delayed app:', app);
+  app.on('ready', async () => {
+    createWindow();
 
   // Spawn MCP server as child process
   mcpProcess = spawn('node', ['../src/index.js'], {
@@ -80,6 +82,7 @@ app.on('ready', async () => {
     }
   });
 });
+}, 1000);
 
 app.on('window-all-closed', () => {
   if (mcpProcess) mcpProcess.kill();
