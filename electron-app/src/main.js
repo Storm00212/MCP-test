@@ -14,7 +14,7 @@ let mcpProcess;
 let client;
 
 function createWindow() {
-  console.log('__dirname:', __dirname);
+  console.log('createWindow called, __dirname:', __dirname);
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
@@ -25,13 +25,28 @@ function createWindow() {
     }
   });
 
-  mainWindow.loadFile(path.join(__dirname, '../dist/index.html'));
+  mainWindow.center();
+  console.log('Window created, centering applied');
+
+  const filePath = path.join(__dirname, '../dist/index.html');
+  console.log('Attempting to load file:', filePath);
+  mainWindow.loadFile(filePath);
+
+  mainWindow.webContents.on('did-finish-load', () => {
+    console.log('Page loaded successfully');
+  });
+
+  mainWindow.webContents.on('did-fail-load', (event, errorCode, errorDescription) => {
+    console.error('Failed to load page:', errorCode, errorDescription);
+  });
+
   mainWindow.webContents.openDevTools();
 }
 
 setTimeout(() => {
   console.log('delayed app:', app);
   app.on('ready', async () => {
+    console.log('App ready event fired');
     createWindow();
 
   // Spawn MCP server as child process
