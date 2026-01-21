@@ -10,6 +10,7 @@ let mcpProcess;
 let client;
 
 function createWindow() {
+  console.log('__dirname:', __dirname);
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
@@ -19,7 +20,7 @@ function createWindow() {
     }
   });
 
-  mainWindow.loadFile('dist/index.html');
+  mainWindow.loadFile(path.join(__dirname, 'index.html'));
 }
 
 app.on('ready', async () => {
@@ -31,17 +32,23 @@ app.on('ready', async () => {
     stdio: ['pipe', 'pipe', 'pipe']
   });
 
-  // Dynamically import MCP SDK
-  const { Client } = await import('@modelcontextprotocol/sdk/client');
-  const { StdioClientTransport } = await import('@modelcontextprotocol/sdk/client');
+  try {
+    // Import MCP SDK
+    const { Client } = require('@modelcontextprotocol/sdk/client');
+    const { StdioClientTransport } = require('@modelcontextprotocol/sdk/client');
+    console.log('MCP SDK imported successfully');
 
-  // Set up MCP client
-  client = new Client({
-    name: 'electron-client',
-    version: '1.0.0',
-  });
+    // Set up MCP client
+    client = new Client({
+      name: 'electron-client',
+      version: '1.0.0',
+    });
 
-  await client.connect(new StdioClientTransport(mcpProcess.stdout, mcpProcess.stdin));
+    await client.connect(new StdioClientTransport(mcpProcess.stdout, mcpProcess.stdin));
+    console.log('MCP client connected');
+  } catch (error) {
+    console.error('Error initializing MCP client:', error);
+  }
 
   // Optional: Handle MCP output
   mcpProcess.stdout.on('data', (data) => {
