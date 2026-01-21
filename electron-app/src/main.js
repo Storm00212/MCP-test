@@ -45,13 +45,6 @@ function createWindow() {
 }
 
 setTimeout(() => {
-  console.log('global.electron:', global.electron);
-  const app = require('app');
-  console.log('app:', app);
-  const BrowserWindow = require('browser-window');
-  console.log('BrowserWindow:', BrowserWindow);
-  const ipcMain = require('ipc-main');
-  console.log('ipcMain:', ipcMain);
   console.log('delayed app:', app);
   app.on('ready', async () => {
     console.log('App ready event fired');
