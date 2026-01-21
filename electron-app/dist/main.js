@@ -1,5 +1,9 @@
+console.log('process.type:', process.type);
+console.log('process.versions.electron:', process.versions.electron);
 console.log('global.app:', global.app);
-const { app, BrowserWindow, ipcMain } = require('electron');
+const electron = require('electron');
+console.log('electron:', electron);
+const { app, BrowserWindow, ipcMain } = electron;
 console.log('app:', app);
 const path = require('path');
 const { spawn } = require('child_process');
@@ -23,8 +27,10 @@ function createWindow() {
   mainWindow.loadFile(path.join(__dirname, '../dist/index.html'));
 }
 
-app.on('ready', async () => {
-  createWindow();
+setTimeout(() => {
+  console.log('delayed app:', app);
+  app.on('ready', async () => {
+    createWindow();
 
   // Spawn MCP server as child process
   mcpProcess = spawn('node', ['../src/index.js'], {
@@ -76,6 +82,7 @@ app.on('ready', async () => {
     }
   });
 });
+}, 1000);
 
 app.on('window-all-closed', () => {
   if (mcpProcess) mcpProcess.kill();
