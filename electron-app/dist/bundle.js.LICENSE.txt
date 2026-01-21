@@ -25,42 +25,105 @@
  */
 
 /**
- * Anime.js - animatable - ESM
+ * Anime.js - CJS
  * @version v4.2.2
  * @license MIT
  * @copyright 2025 - Julian Garnier
  */
 
 /**
- * Anime.js - animation - ESM
+ * Anime.js - animatable - CJS
  * @version v4.2.2
  * @license MIT
  * @copyright 2025 - Julian Garnier
  */
 
 /**
- * Anime.js - core - ESM
+ * Anime.js - animation - CJS
  * @version v4.2.2
  * @license MIT
  * @copyright 2025 - Julian Garnier
  */
 
 /**
- * Anime.js - scope - ESM
+ * Anime.js - core - CJS
  * @version v4.2.2
  * @license MIT
  * @copyright 2025 - Julian Garnier
  */
 
 /**
- * Anime.js - timeline - ESM
+ * Anime.js - draggable - CJS
  * @version v4.2.2
  * @license MIT
  * @copyright 2025 - Julian Garnier
  */
 
 /**
- * Anime.js - utils - ESM
+ * Anime.js - easings - CJS
+ * @version v4.2.2
+ * @license MIT
+ * @copyright 2025 - Julian Garnier
+ */
+
+/**
+ * Anime.js - engine - CJS
+ * @version v4.2.2
+ * @license MIT
+ * @copyright 2025 - Julian Garnier
+ */
+
+/**
+ * Anime.js - events - CJS
+ * @version v4.2.2
+ * @license MIT
+ * @copyright 2025 - Julian Garnier
+ */
+
+/**
+ * Anime.js - scope - CJS
+ * @version v4.2.2
+ * @license MIT
+ * @copyright 2025 - Julian Garnier
+ */
+
+/**
+ * Anime.js - svg - CJS
+ * @version v4.2.2
+ * @license MIT
+ * @copyright 2025 - Julian Garnier
+ */
+
+/**
+ * Anime.js - text - CJS
+ * @version v4.2.2
+ * @license MIT
+ * @copyright 2025 - Julian Garnier
+ */
+
+/**
+ * Anime.js - timeline - CJS
+ * @version v4.2.2
+ * @license MIT
+ * @copyright 2025 - Julian Garnier
+ */
+
+/**
+ * Anime.js - timer - CJS
+ * @version v4.2.2
+ * @license MIT
+ * @copyright 2025 - Julian Garnier
+ */
+
+/**
+ * Anime.js - utils - CJS
+ * @version v4.2.2
+ * @license MIT
+ * @copyright 2025 - Julian Garnier
+ */
+
+/**
+ * Anime.js - waapi - CJS
  * @version v4.2.2
  * @license MIT
  * @copyright 2025 - Julian Garnier
