@@ -7,8 +7,6 @@ try {
 } catch (e) {
   console.error('Error requiring electron:', e);
 }
-const BrowserWindow = electron.BrowserWindow;
-const ipcMain = electron.ipcMain;
 const path = require('path');
 const { spawn } = require('child_process');
 let mainWindow;
