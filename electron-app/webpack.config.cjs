@@ -16,8 +16,7 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            sourceType: 'module',
-            presets: [['@babel/preset-env', { modules: false }], '@babel/preset-react'],
+            presets: [['@babel/preset-env', { modules: 'commonjs' }], '@babel/preset-react'],
           },
         },
       },
