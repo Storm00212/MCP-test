@@ -48,7 +48,11 @@ setTimeout(() => {
   console.log('delayed app:', app);
   app.on('ready', async () => {
     console.log('App ready event fired');
-    createWindow();
+    try {
+      createWindow();
+    } catch (error) {
+      console.error('Error creating window:', error);
+    }
 
   // Spawn MCP server as child process
   mcpProcess = spawn('node', ['../src/index.js'], {
