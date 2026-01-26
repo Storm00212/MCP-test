@@ -25,6 +25,7 @@ function createWindow() {
       contextIsolation: false
     }
   });
+  console.log('BrowserWindow webPreferences:', mainWindow.webContents.getWebPreferences());
 
   mainWindow.center();
   console.log('Window created, centering applied');
