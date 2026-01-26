@@ -40,13 +40,16 @@ const Terminal = ({
         const toolName = parts[0];
         const args = parts.slice(1);
         setOutput(prev => [...prev, `> ${command}`]);
+        console.log('Renderer (Terminal): Invoking execute-tool with toolName:', toolName, 'args:', args);
         ipcRenderer.invoke('execute-tool', { toolName, args }).then(result => {
+          console.log('Renderer (Terminal): Received result from execute-tool:', result);
           if (result.error) {
             setOutput(prev => [...prev, `Error: ${result.error}`]);
           } else {
             setOutput(prev => [...prev, JSON.stringify(result, null, 2)]);
           }
         }).catch(err => {
+          console.error('Renderer (Terminal): IPC invoke error:', err);
           setOutput(prev => [...prev, `IPC Error: ${err.message}`]);
         });
         setInput('');
