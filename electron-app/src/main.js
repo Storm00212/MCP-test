@@ -56,10 +56,12 @@ setTimeout(() => {
     }
 
   // Spawn MCP server as child process
+  console.log('Spawning MCP server process...');
   mcpProcess = spawn('node', ['../src/index.js'], {
     cwd: path.join(__dirname, '..'),
     stdio: ['pipe', 'pipe', 'pipe']
   });
+  console.log('MCP server process spawned, PID:', mcpProcess.pid);
 
   try {
     // Import MCP SDK
@@ -73,8 +75,9 @@ setTimeout(() => {
       version: '1.0.0',
     });
 
+    console.log('Attempting to connect MCP client...');
     await client.connect(new StdioClientTransport(mcpProcess.stdout, mcpProcess.stdin));
-    console.log('MCP client connected');
+    console.log('MCP client connected successfully');
   } catch (error) {
     console.error('Error initializing MCP client:', error);
   }
@@ -90,13 +93,16 @@ setTimeout(() => {
 
   // IPC handler
   ipcMain.handle('execute-tool', async (event, { toolName, args }) => {
+    console.log('IPC: Received execute-tool request for tool:', toolName, 'with args:', args);
     try {
       const result = await client.callTool({
         name: toolName,
         arguments: args,
       });
+      console.log('IPC: Tool execution result:', result);
       return result;
     } catch (error) {
+      console.error('IPC: Error executing tool:', error);
       let errorMsg = error.message;
       if (errorMsg.toLowerCase().includes('tool') && errorMsg.toLowerCase().includes('not found')) {
         errorMsg = 'Unknown tool';
