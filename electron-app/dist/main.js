@@ -1,6 +1,6 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
-import path from 'path';
-import { spawn } from 'child_process';
+const { app, BrowserWindow, ipcMain } = require('electron');
+const path = require('path');
+const { spawn } = require('child_process');
 
 console.log('process.type:', process.type);
 console.log('process.versions.electron:', process.versions.electron);
