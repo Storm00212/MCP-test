@@ -6,15 +6,11 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "tauri": "tauri",
     "backend:python": "cd backend/python && python main.py",
     "backend:node": "cd backend/node && node src/index.js",
     "start:all": "concurrently \"npm run backend:python\" \"npm run backend:node\" \"npm run dev\""
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.25.2",
-    "@tauri-apps/api": "^2.0.0",
-    "@tauri-apps/plugin-shell": "^2.0.0",
     "axios": "^1.6.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -29,7 +25,7 @@
     "@react-three/drei": "^9.88.0",
     "react-grid-layout": "^1.4.0",
     "@monaco-editor/react": "^4.6.0",
-    "react-flow": "^11.10.0"
+    "@xyflow/react": "^12.0.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.0",
