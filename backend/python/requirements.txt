@@ -1,0 +1,18 @@
+# Engineering Command OS - Python Backend Dependencies
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+python-dotenv>=1.0.0
+pydantic>=2.5.0
+websockets>=12.0
+psutil>=5.9.0
+
+# LangChain & RAG
+langchain>=0.1.0
+langchain-openai>=0.1.0
+langchain-community>=0.0.10
+faiss-cpu>=1.7.0
+openai>=1.3.0
+
+# For PDF processing (optional)
+pypdf>=3.17.0
+pymupdf>=1.23.0
