@@ -539,7 +539,7 @@ def create_llm_manager() -> LLMManager:
             priority=0
         )
         manager.add_provider(GeminiProvider(gemini_config))
-        print("✓ Gemini provider configured")
+        print("[OK] Gemini provider configured")
     
     # DeepSeek (cheap, good fallback)
     if os.getenv('DEEPSEEK_API_KEY'):
@@ -553,7 +553,7 @@ def create_llm_manager() -> LLMManager:
             priority=1
         )
         manager.add_provider(DeepSeekProvider(deepseek_config))
-        print("✓ DeepSeek provider configured")
+        print("[OK] DeepSeek provider configured")
     
     # OpenAI (standard)
     if os.getenv('OPENAI_API_KEY'):
@@ -567,7 +567,7 @@ def create_llm_manager() -> LLMManager:
             priority=2
         )
         manager.add_provider(OpenAIProvider(openai_config))
-        print("✓ OpenAI provider configured")
+        print("[OK] OpenAI provider configured")
     
     # Grok (xAI)
     if os.getenv('GROK_API_KEY'):
@@ -581,10 +581,10 @@ def create_llm_manager() -> LLMManager:
             priority=3
         )
         manager.add_provider(GrokProvider(grok_config))
-        print("✓ Grok provider configured")
+        print("[OK] Grok provider configured")
     
     if not manager._providers:
-        print("⚠ No LLM providers configured!")
+        print("WARNING: No LLM providers configured!")
         print("  Add API keys to .env file")
     
     return manager
@@ -606,7 +606,7 @@ if __name__ == "__main__":
         print("\nHealth check:")
         health = await manager.health_check_all()
         for name, status in health.items():
-            print(f"  {name}: {'✓' if status else '✗'}")
+            print(f"  {name}: OK" if status else f"  {name}: FAIL")
         
         print("\nTesting generation...")
         response = await manager.generate(
@@ -614,12 +614,12 @@ if __name__ == "__main__":
         )
         
         if response.success:
-            print(f"\n✓ Success! (Provider: {response.provider})")
+            print(f"\nOK: Success! (Provider: {response.provider})")
             print(f"  Response: {response.text[:200]}...")
             print(f"  Tokens: {response.tokens_used}")
             print(f"  Latency: {response.latency_ms}ms")
         else:
-            print(f"\n✗ Failed: {response.error}")
+            print(f"\nFAIL: {response.error}")
         
         print("\nStats:", manager.get_stats())
     
