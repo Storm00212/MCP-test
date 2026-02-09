@@ -181,3 +181,66 @@ async def get_metrics():
 async def launch_app(request: AppLaunchRequest):
     """Launch a whitelisted application"""
     try:
+        result = launch_application(request.app_name, request.file_path)
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/rag/query", response_model=QueryResponse)
+async def rag_query(request: QueryRequest):
+    """Query the RAG system"""
+    await load_rag_system()
+    
+    if chain is None:
+        raise HTTPException(status_code=503, detail="RAG system not initialized")
+    
+    try:
+        result = await asyncio.get_event_loop().run_in_executor(
+            None,
+            lambda: chain.invoke({"query": request.query})
+        )
+        return {"response": result.get("result", {}).get("text", str(result))}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/rag/load")
+async def load_vector_store():
+    """Force load the vector store"""
+    await load_rag_system()
+    return {"status": "loaded", "message": "Vector store loaded successfully"}
+
+# ============================================
+# WEBSOCKET FOR REAL-TIME LOGS
+# ============================================
+class ConnectionManager:
+    def __init__(self):
+        self.active_connections: list[WebSocket] = []
+    
+    async def connect(self, websocket: WebSocket):
+        await websocket.accept()
+        self.active_connections.append(websocket)
+    
+    def disconnect(self, websocket: WebSocket):
+        self.active_connections.remove(websocket)
+    
+    async def send_message(self, message: dict):
+        for connection in self.active_connections:
+            await connection.send_json(message)
+
+manager = ConnectionManager()
+
+@app.websocket("/ws/logs")
+async def websocket_endpoint(websocket: WebSocket):
+    await manager.connect(websocket)
+    try:
+        while True:
+            await websocket.receive_text()
+    except WebSocketDisconnect:
+        manager.disconnect(websocket)
+
+# ============================================
+# RUN SERVER
+# ============================================
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
