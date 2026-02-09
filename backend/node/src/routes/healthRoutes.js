@@ -3,7 +3,11 @@
  */
 
 import { Router } from 'express';
+import { readFileSync } from 'fs';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
 
+const __dirname = dirname(fileURLToPath(import.meta.url));
 const router = Router();
 
 /**
@@ -24,7 +28,6 @@ router.get('/', (req, res) => {
  * Readiness check - verifies the server is ready to accept requests
  */
 router.get('/ready', (req, res) => {
-  // Add any readiness checks here (e.g., database connections, etc.)
   return res.json({ 
     success: true, 
     status: 'ready',
@@ -50,13 +53,20 @@ router.get('/live', (req, res) => {
  * Get version information
  */
 router.get('/version', (req, res) => {
-  const pkg = await import('../package.json', { assert: { type: 'json' } }).catch(() => ({}));
+  let version = '1.0.0';
+  try {
+    const pkgPath = join(__dirname, '../package.json');
+    const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8'));
+    version = pkg.version || '1.0.0';
+  } catch (e) {
+    // Use default version
+  }
   
   return res.json({ 
     success: true, 
     data: {
-      name: pkg.default?.name || 'engineering-command-os-node',
-      version: pkg.default?.version || '1.0.0',
+      name: 'engineering-command-os-node',
+      version,
       nodeVersion: process.version
     }
   });
