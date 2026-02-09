@@ -94,3 +94,61 @@ body {
   0% {
     transform: translateY(-100%);
     opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh);
+    opacity: 0;
+  }
+}
+
+/* Grid background */
+.grid-bg {
+  background-image: 
+    linear-gradient(rgba(30, 30, 46, 0.3) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(30, 30, 46, 0.3) 1px, transparent 1px);
+  background-size: 50px 50px;
+}
+
+/* Terminal styles */
+.xterm {
+  background: transparent !important;
+}
+
+.xterm-viewport {
+  background: transparent !important;
+}
+
+/* Status indicators */
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.status-online {
+  background: #00ff88;
+  box-shadow: 0 0 8px #00ff88;
+}
+
+.status-offline {
+  background: #ff4444;
+  box-shadow: 0 0 8px #ff4444;
+}
+
+.status-warning {
+  background: #ffaa00;
+  box-shadow: 0 0 8px #ffaa00;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
