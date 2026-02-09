@@ -84,3 +84,47 @@ pub fn launch_application(app_name: &str) -> Result<String, String> {
         return Ok("YouTube opened in browser".to_string());
     }
     
+    // Find app path
+    let app_path = APP_PATHS.iter()
+        .find(|(name, _)| *name == app_name)
+        .map(|(_, path)| *path)
+        .ok_or_else(|| format!("Path not found for '{}'", app_name))?;
+    
+    // Launch the application
+    Command::new("cmd")
+        .args(["/c", "start", "", app_path])
+        .stdout(Stdio::null())
+        .spawn()
+        .map_err(|e| e.to_string())?;
+    
+    Ok(format!("Launched {}", app_name))
+}
+
+/// Query the RAG system via Python backend
+pub async fn query_rag(query: &str) -> Result<serde_json::Value, String> {
+    // Make HTTP request to Python backend
+    let client = reqwest::Client::new();
+    let response = client
+        .post("http://localhost:8000/rag/query")
+        .json(&json!({ "query": query }))
+        .send()
+        .await
+        .map_err(|e| e.to_string())?;
+    
+    if response.status().is_success() {
+        response.json().await.map_err(|e| e.to_string())
+    } else {
+        Err(format!("RAG query failed: {}", response.status()))
+    }
+}
+
+/// Toggle voice recognition
+pub async fn toggle_voice_recognition(active: bool) -> Result<String, String> {
+    // This would integrate with local speech recognition
+    // For now, just return a status
+    if active {
+        Ok("Voice recognition activated".to_string())
+    } else {
+        Ok("Voice recognition deactivated".to_string())
+    }
+}
