@@ -146,3 +146,25 @@ const AITerminal: React.FC = () => {
             onClick={() => handleQuickQuery('What is Laplace transform?')}
             className="px-2 py-1 text-[10px] font-mono bg-cyber-border hover:bg-cyber-accent hover:text-cyber-dark rounded transition-colors"
           >
+            Laplace
+          </button>
+        </div>
+      </div>
+
+      {/* Terminal */}
+      <div ref={terminalRef} className="flex-1 p-2 overflow-hidden" />
+
+      {/* Loading indicator */}
+      {ragLoading && (
+        <div className="absolute inset-0 bg-cyber-dark/50 flex items-center justify-center">
+          <div className="flex items-center gap-2">
+            <span className="text-cyber-accent animate-spin">◆</span>
+            <span className="font-mono text-sm text-gray-300">Processing query...</span>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default AITerminal;
