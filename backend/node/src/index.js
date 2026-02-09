@@ -1,8 +1,7 @@
-#!/usr/bin/env node
-"""
-Engineering Command OS - Node.js Backend
-Handles: Browser automation (Puppeteer/Playwright), URL launching, Child process management
-"""
+/*
+ * Engineering Command OS - Node.js Backend
+ * Handles: Browser automation (Puppeteer/Playwright), URL launching, Child process management
+ */
 
 import express from 'express';
 import cors from 'cors';
@@ -33,7 +32,7 @@ app.post('/browser/open', async (req, res) => {
   }
   
   try {
-    let command;
+    let command, args;
     switch (browser) {
       case 'chrome':
         command = 'cmd';
@@ -66,6 +65,45 @@ app.post('/browser/open', async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
+});
+
+// WhatsApp specific
+app.post('/whatsapp/send', async (req, res) => {
+  const { phone, message } = req.body;
+  
+  if (!phone || !message) {
+    return res.status(400).json({ error: 'Phone and message are required' });
+  }
+  
+  // Note: WhatsApp Web automation requires authentication
+  // This opens WhatsApp Web with a pre-filled message link
+  const waUrl = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+  
+  spawn('cmd', ['/c', 'start', waUrl], { detached: true, stdio: 'ignore' });
+  
+  res.json({ 
+    status: 'success', 
+    message: 'Opening WhatsApp to send message',
+    url: waUrl
+  });
+});
+
+// YouTube search
+app.post('/youtube/search', async (req, res) => {
+  const { query } = req.body;
+  
+  if (!query) {
+    return res.status(400).json({ error: 'Search query is required' });
+  }
+  
+  const searchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
+  spawn('cmd', ['/c', 'start', searchUrl], { detached: true, stdio: 'ignore' });
+  
+  res.json({ 
+    status: 'success', 
+    message: `Searching YouTube for: ${query}`,
+    url: searchUrl
+  });
 });
 
 // WhatsApp specific
