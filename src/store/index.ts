@@ -162,3 +162,24 @@ export const useStore = create<StoreState>((set, get) => ({
         ragLoading: false
       }));
     } catch (error) {
+      console.error('RAG query failed:', error);
+      set({ ragLoading: false });
+    }
+  },
+  
+  toggleVoice: async () => {
+    const current = get().voiceActive;
+    try {
+      await invoke('toggle_voice_recognition', { active: !current });
+      set({ voiceActive: !current });
+    } catch (error) {
+      console.error('Failed to toggle voice:', error);
+    }
+  },
+  
+  addMCPLog: (log) => {
+    set(state => ({
+      mcpLogs: [log, ...state.mcpLogs].slice(0, 100) // Keep last 100 logs
+    }));
+  }
+}));
