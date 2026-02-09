@@ -119,12 +119,12 @@ app.use((err, req, res, next) => {
 // ============================================
 app.listen(PORT, () => {
   console.log(`╔════════════════════════════════════════════════════════════╗`);
-  console.log(`║  Engineering Command OS - Node.js Backend                 ║`);
-  console.log(`║  Running on port ${PORT}                                       ║`);
+  console.log(`║  Engineering Command OS - Node.js Backend                  ║`);
+  console.log(`║  JARVIS ONLINE Running on port ${PORT}                     ║`);
   console.log(`╠════════════════════════════════════════════════════════════╣`);
-  console.log(`║  Health:    http://localhost:${PORT}/health                 ║`);
-  console.log(`║  API Docs:  http://localhost:${PORT}/api                    ║`);
-  console.log(`║  Root:      http://localhost:${PORT}/                       ║`);
+  console.log(`║  Health:    http://localhost:${PORT}/health                ║`);
+  console.log(`║  API Docs:  http://localhost:${PORT}/api                   ║`);
+  console.log(`║  Root:      http://localhost:${PORT}/                      ║`);
   console.log(`╚════════════════════════════════════════════════════════════╝`);
 });
 
