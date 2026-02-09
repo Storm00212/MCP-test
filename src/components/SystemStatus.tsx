@@ -27,3 +27,52 @@ const SystemStatus: React.FC = () => {
 
         {/* RAM */}
         <div>
+          <div className="flex justify-between text-xs mb-1">
+            <span className="text-gray-400">RAM</span>
+            <span className="font-mono text-cyber-secondary">{systemMetrics.ram}%</span>
+          </div>
+          <div className="h-1 bg-cyber-dark rounded-full overflow-hidden">
+            <div 
+              className="h-full bg-cyber-secondary transition-all duration-500"
+              style={{ width: `${systemMetrics.ram}%` }}
+            />
+          </div>
+        </div>
+
+        {/* Temperature */}
+        <div>
+          <div className="flex justify-between text-xs mb-1">
+            <span className="text-gray-400">TEMP</span>
+            <span className={`font-mono ${
+              systemMetrics.temperature > 80 ? 'text-cyber-error' : 
+              systemMetrics.temperature > 60 ? 'text-cyber-warning' : 'text-cyber-success'
+            }`}>
+              {systemMetrics.temperature}°C
+            </span>
+          </div>
+          <div className="h-1 bg-cyber-dark rounded-full overflow-hidden">
+            <div 
+              className={`h-full transition-all duration-500 ${
+                systemMetrics.temperature > 80 ? 'bg-cyber-error' :
+                systemMetrics.temperature > 60 ? 'bg-cyber-warning' : 'bg-cyber-success'
+              }`}
+              style={{ width: `${Math.min((systemMetrics.temperature / 100) * 100, 100)}%` }}
+            />
+          </div>
+        </div>
+
+        {/* Network */}
+        <div className="flex items-center justify-between pt-2">
+          <span className="text-xs text-gray-400">Network</span>
+          <span className={`text-xs font-mono ${
+            systemMetrics.network === 'online' ? 'text-cyber-success' : 'text-cyber-error'
+          }`}>
+            {systemMetrics.network.toUpperCase()}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default SystemStatus;
