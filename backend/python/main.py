@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Engineering Command OS - Python FastAPI Backend
-Handles: RAG pipeline, MCP agent communication, Voice processing, OS automation
+Handles: RAG pipeline, MCP agent communication, Voice processing, OS automation, LLM integration
 """
 
 import asyncio
@@ -26,6 +26,19 @@ load_dotenv()
 # ============================================
 DATA_DIR = Path(__file__).parent.parent.parent / "data"
 FAISS_INDEX_PATH = Path(__file__).parent.parent.parent / "faiss_index"
+
+# ============================================
+# LLM MANAGER (Lazy loading)
+# ============================================
+llm_manager = None
+
+async def get_llm_manager():
+    """Lazy load LLM manager on first request"""
+    global llm_manager
+    if llm_manager is None:
+        from llm_manager import create_llm_manager
+        llm_manager = create_llm_manager()
+    return llm_manager
 
 # ============================================
 # RAG PIPELINE (Lazy loading)
@@ -57,13 +70,11 @@ async def load_rag_system():
             allow_dangerous_deserialization=True
         )
         
-        model = ChatOpenAI(
+        chain = RetrievalQAChain.from_llM(model=ChatOpenAI(
             api_key=os.getenv("OPENAI_API_KEY"),
             model="gpt-3.5-turbo",
             temperature=0
-        )
-        
-        chain = RetrievalQAChain.from_llm(model, vector_store.as_retriever())
+        ), retriever=vector_store.asRetriever())
         print("RAG system ready!")
         
     except Exception as e:
@@ -89,7 +100,6 @@ def launch_application(app_name: str, file_path: Optional[str] = None) -> dict:
         raise ValueError(f"Application {app_name} is not whitelisted")
     
     if app_name == "youtube":
-        # Open YouTube in default browser
         subprocess.run(["cmd", "/c", "start", "https://youtube.com"])
         return {"status": "success", "message": "YouTube opened in browser"}
     
@@ -113,7 +123,7 @@ def get_system_metrics() -> dict:
     
     cpu = psutil.cpu_percent(interval=None)
     ram = psutil.virtual_memory().percent
-    temperature = 45  # Default, would need platform-specific code
+    temperature = 45
     
     return {
         "cpu": cpu,
@@ -131,6 +141,14 @@ async def lifespan(app: FastAPI):
     print("Engineering Command OS - Python Backend Starting...")
     print(f"Data directory: {DATA_DIR}")
     print(f"FAISS index: {FAISS_INDEX_PATH}")
+    
+    # Initialize LLM manager
+    try:
+        manager = await get_llm_manager()
+        print(f"LLM Providers: {list(manager._providers.keys())}")
+    except Exception as e:
+        print(f"LLM Manager initialization: {e}")
+    
     yield
     print("Engineering Command OS - Python Backend Shutting Down...")
 
@@ -160,22 +178,43 @@ class AppLaunchRequest(BaseModel):
     app_name: str
     file_path: Optional[str] = None
 
+class LLMGenerateRequest(BaseModel):
+    prompt: str
+    max_tokens: Optional[int] = 512
+    provider: Optional[str] = None
+
 class QueryResponse(BaseModel):
     response: str
 
 # ============================================
-# ROUTES
+# ROUTES - HEALTH & SYSTEM
 # ============================================
 
 @app.get("/health")
 async def health_check():
     """Health check endpoint"""
-    return {"status": "healthy", "service": "python-backend"}
+    llm_status = "unavailable"
+    try:
+        manager = await get_llm_manager()
+        health = await manager.health_check_all()
+        llm_status = {k: "healthy" if v else "unhealthy" for k, v in health.items()}
+    except Exception:
+        pass
+    
+    return {
+        "status": "healthy", 
+        "service": "python-backend",
+        "llm_providers": llm_status
+    }
 
 @app.get("/system/metrics")
 async def get_metrics():
     """Get system metrics"""
     return get_system_metrics()
+
+# ============================================
+# ROUTES - APPLICATION LAUNCHER
+# ============================================
 
 @app.post("/app/launch")
 async def launch_app(request: AppLaunchRequest):
@@ -185,6 +224,76 @@ async def launch_app(request: AppLaunchRequest):
         return result
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+
+# ============================================
+# ROUTES - LLM
+# ============================================
+
+@app.post("/llm/generate")
+async def llm_generate(request: LLMGenerateRequest):
+    """Generate text using LLM with automatic failover"""
+    try:
+        manager = await get_llm_manager()
+        
+        response = await manager.generate(
+            prompt=request.prompt,
+            max_tokens=request.max_tokens,
+            preferred_provider=request.provider
+        )
+        
+        if response.success:
+            return {
+                "success": True,
+                "response": response.text,
+                "provider": response.provider,
+                "model": response.model,
+                "tokens_used": response.tokens_used,
+                "latency_ms": response.latency_ms
+            }
+        else:
+            raise HTTPException(status_code=500, detail=response.error)
+            
+    except ImportError as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/llm/providers")
+async def llm_providers():
+    """Get available LLM providers and their status"""
+    try:
+        manager = await get_llm_manager()
+        return {
+            "providers": manager.get_stats(),
+            "available": list(manager._providers.keys())
+        }
+    except Exception as e:
+        return {"error": str(e)}
+
+@app.get("/llm/health")
+async def llm_health_check():
+    """Check health of all LLM providers"""
+    try:
+        manager = await get_llm_manager()
+        health = await manager.health_check_all()
+        return {
+            provider: "healthy" if status else "unhealthy"
+            for provider, status in health.items()
+        }
+    except Exception as e:
+        return {"error": str(e)}
+
+@app.post("/llm/clear-cache")
+async def llm_clear_cache():
+    """Clear the LLM response cache"""
+    try:
+        manager = await get_llm_manager()
+        manager.clear_cache()
+        return {"success": True, "message": "Cache cleared"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ============================================
+# ROUTES - RAG
+# ============================================
 
 @app.post("/rag/query", response_model=QueryResponse)
 async def rag_query(request: QueryRequest):
