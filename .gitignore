@@ -23,4 +23,4 @@ src-tauri/target/
 src-tauri/src-tauri/
 
 # Legacy Electron (to be removed)
-# electron-app/
+ electron-app/
