@@ -7,14 +7,12 @@ const Sidebar: React.FC = () => {
   const { voiceActive, toggleVoice } = useStore();
 
   return (
-    <aside className="w-64 bg-cyber-panel border-r border-cyber-border flex flex-col">
+    <aside className="w-64 bg-transparent border-r border-cyber-border/50 flex flex-col p-4 space-y-4">
       {/* Header */}
-      <div className="p-4 border-b border-cyber-border">
-        <h1 className="text-lg font-bold text-cyber-accent font-mono">
-          ENGINEERING<br />
-          COMMAND OS
+      <div className="text-center">
+        <h1 className="text-xl font-bold text-cyber-accent font-mono">
+          E C O S
         </h1>
-        <div className="text-xs text-gray-500 mt-1">v1.0.0 • Tauri</div>
       </div>
 
       {/* System Status */}
@@ -24,16 +22,16 @@ const Sidebar: React.FC = () => {
       <AppLauncher />
 
       {/* Voice Toggle */}
-      <div className="p-4 border-t border-cyber-border">
+      <div className="pt-4 border-t border-cyber-border/30">
         <button
           onClick={toggleVoice}
-          className={`w-full py-2 px-4 rounded-lg font-mono text-sm transition-all ${
+          className={`w-full py-2 px-4 rounded-md font-mono text-sm transition-all border ${
             voiceActive
-              ? 'bg-cyber-accent text-cyber-dark glow-accent'
-              : 'bg-cyber-border text-gray-300 hover:bg-gray-700'
+              ? 'bg-cyber-accent/20 text-cyber-accent border-cyber-accent'
+              : 'bg-transparent text-gray-400 border-cyber-border/50 hover:bg-cyber-panel/50 hover:text-white'
           }`}
         >
-          {voiceActive ? '🎤 VOICE ACTIVE' : '🎤 VOICE OFF'}
+          {voiceActive ? 'VOICE: ON' : 'VOICE: OFF'}
         </button>
       </div>
 
