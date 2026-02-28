@@ -90,11 +90,24 @@ body {
   background: var(--color-cyber-accent);
 }
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* Panel styles */
 .cyber-panel {
-  background: linear-gradient(135deg, var(--color-cyber-panel) 0%, #1a1a2e 100%);
+  background: linear-gradient(135deg, rgba(18, 18, 26, 0.8) 0%, rgba(26, 26, 46, 0.8) 100%);
   border: 1px solid var(--color-cyber-border);
   border-radius: 8px;
+  animation: fadeIn 0.5s ease-out;
+  backdrop-filter: blur(5px);
 }
 
 .cyber-border {
