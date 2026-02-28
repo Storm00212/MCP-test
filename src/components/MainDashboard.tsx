@@ -5,20 +5,20 @@ import MCPActivity from './MCPActivity';
 
 const MainDashboard: React.FC = () => {
   return (
-    <main className="flex-1 flex flex-col bg-cyber-dark overflow-hidden">
-      {/* Top section: 3D Telemetry */}
-      <div className="h-1/3 border-b border-cyber-border">
+    <main className="flex-1 p-4 grid grid-cols-2 grid-rows-2 gap-4 bg-transparent">
+      {/* Top-left: Telemetry */}
+      <div className="cyber-panel col-span-1 row-span-1">
         <TelemetryPanel />
       </div>
 
-      {/* Middle section: AI Terminal */}
-      <div className="h-1/3 border-b border-cyber-border">
-        <AITerminal />
+      {/* Top-right: MCP Activity */}
+      <div className="cyber-panel col-span-1 row-span-1">
+        <MCPActivity />
       </div>
 
-      {/* Bottom section: MCP Activity Log */}
-      <div className="h-1/3">
-        <MCPActivity />
+      {/* Bottom: AI Terminal */}
+      <div className="cyber-panel col-span-2 row-span-1">
+        <AITerminal />
       </div>
     </main>
   );
