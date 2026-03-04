@@ -40,22 +40,9 @@
       "icons/icon.ico"
     ]
   },
-  "allowlist": {
-    "all": false,
+  "plugins": {
     "shell": {
-      "all": true,
       "open": true
-    },
-    "window": {
-      "all": true,
-      "close": true,
-      "setAlwaysOnTop": true,
-      "setDecorations": true,
-      "setFullscreen": true,
-      "setTitle": true
-    },
-    "process": {
-      "all": true
     }
   }
 }
