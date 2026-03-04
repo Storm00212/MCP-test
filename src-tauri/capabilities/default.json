@@ -1,0 +1,22 @@
+{
+  "identifier": "default",
+  "description": "Default capabilities for the Engineering Command OS",
+  "windows": ["main"],
+  "permissions": [
+    "core:default",
+    "shell:allow-open",
+    "shell:allow-execute",
+    "window:default",
+    "window:allow-close",
+    "window:allow-set-always-on-top",
+    "window:allow-set-decorations",
+    "window:allow-set-fullscreen",
+    "window:allow-set-title",
+    "window:allow-minimize",
+    "window:allow-maximize",
+    "window:allow-unmaximize",
+    "window:allow-show",
+    "window:allow-hide",
+    "process:default"
+  ]
+}
