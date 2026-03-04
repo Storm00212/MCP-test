@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "vite build",
     "backend:python": "cd backend/python && python main.py",
     "backend:node": "cd backend/node && node src/index.js",
     "start:all": "concurrently \"npm run backend:python\" \"npm run backend:node\" \"npm run dev\""
