@@ -211,3 +211,41 @@ export const useStore = create<StoreState>((set, get) => ({
       const assistantMessage: RAGMessage = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
+        content: `Query received: "${query}". The RAG backend is currently unavailable. Please ensure the Python backend is running (npm run backend:python).`,
+        timestamp: new Date().toISOString()
+      };
+      
+      set(state => ({
+        ragMessages: [...state.ragMessages, assistantMessage],
+        ragLoading: false
+      }));
+    }
+  },
+  
+  toggleVoice: async () => {
+    const current = get().voiceActive;
+    // Voice recognition would require additional setup
+    set({ voiceActive: !current });
+  },
+  
+  addMCPLog: (log) => {
+    set(state => ({
+      mcpLogs: [log, ...state.mcpLogs].slice(0, 100) // Keep last 100 logs
+    }));
+  }
+}));
+
+// Helper function to get the appropriate command for each app
+function getAppCommand(appName: string): string {
+  const commands: Record<string, string> = {
+    ltspice: 'C:\\Program Files\\LTspice\\XVIIx64.exe',
+    matlab: 'C:\\Program Files\\MATLAB\\R2023a\\bin\\matlab.exe',
+    proteus: 'C:\\Program Files\\Labcenter Electronics\\Proteus 8 Professional\\ISIS.exe',
+    vscode: 'code',
+    chrome: 'start chrome',
+    whatsapp: 'start whatsapp',
+    youtube: 'start https://youtube.com'
+  };
+  
+  return commands[appName] || appName;
+}
