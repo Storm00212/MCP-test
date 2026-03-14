@@ -1,7 +1,7 @@
 {
   "name": "engineering-command-os",
   "version": "1.0.0",
-  "description": "Tauri-Based AI-Powered Desktop Engineering Interface",
+  "description": "React Vite AI-Powered Desktop Engineering Interface",
   "type": "module",
   "scripts": {
     "dev": "vite",
