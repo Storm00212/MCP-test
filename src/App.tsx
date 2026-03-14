@@ -12,7 +12,7 @@ function App() {
   }, [initializeSystem]);
 
   return (
-    <div className="h-screen w-screen bg-transparent text-gray-100 overflow-hidden">
+    <div className="h-screen w-screen bg-transparent text-gray-200 overflow-hidden">
       <TitleBar />
       <div className="flex h-full pt-10">
         <Sidebar />
