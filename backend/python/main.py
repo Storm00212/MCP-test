@@ -58,6 +58,8 @@ async def load_rag_system():
         from langchain_openai import OpenAIEmbeddings, ChatOpenAI
         from langchain.chains import RetrievalQAChain
         
+        from langchain_google_genai import ChatGoogleGenerativeAI
+        
         print("Loading FAISS vector store...")
         embeddings = OpenAIEmbeddings(
             api_key=os.getenv("OPENAI_API_KEY"),
@@ -70,9 +72,10 @@ async def load_rag_system():
             allow_dangerous_deserialization=True
         )
         
-        chain = RetrievalQAChain.from_llM(model=ChatOpenAI(
-            api_key=os.getenv("OPENAI_API_KEY"),
-            model="gpt-3.5-turbo",
+        # Use Gemini which is free and healthy
+        chain = RetrievalQAChain.from_llm(model=ChatGoogleGenerativeAI(
+            model="gemini-1.5-flash",
+            google_api_key=os.getenv("GEMINI_API_KEY"),
             temperature=0
         ), retriever=vector_store.asRetriever())
         print("RAG system ready!")
