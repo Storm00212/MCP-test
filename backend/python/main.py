@@ -322,9 +322,9 @@ async def rag_query(request: QueryRequest):
     try:
         result = await asyncio.get_event_loop().run_in_executor(
             None,
-            lambda: chain.invoke({"query": request.query})
+            lambda: chain.invoke({"input": request.query})
         )
-        return {"response": result.get("result", {}).get("text", str(result))}
+        return {"response": result.get("answer", str(result))}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
