@@ -193,7 +193,7 @@ export const useStore = create<StoreState>((set, get) => ({
     
     try {
       // Try Python backend first
-      const response = await axios.post('http://localhost:8000/query', { query }, { timeout: 30000 });
+      const response = await axios.post('http://localhost:8000/rag/query', { query }, { timeout: 30000 });
       
       const assistantMessage: RAGMessage = {
         id: (Date.now() + 1).toString(),
