@@ -56,46 +56,39 @@ async def load_rag_system():
     try:
         from langchain_community.vectorstores.faiss import FAISS
         from langchain_openai import OpenAIEmbeddings
-        from langchain_google_genai import ChatGoogleGenerativeAI
-        from langchain.chains import create_retrieval_chain
-        from langchain.chains.combine_documents import create_stuff_documents_chain
-        from langchain_core.prompts import ChatPromptTemplate
         
         print("Loading FAISS vector store...")
-        embeddings = OpenAIEmbeddings(
-            api_key=os.getenv("OPENAI_API_KEY"),
-            model="text-embedding-ada-002"
-        )
         
-        vector_store = FAISS.load_local(
-            str(FAISS_INDEX_PATH), 
-            embeddings,
-            allow_dangerous_deserialization=True
-        )
+        # Load existing vector store
+        faiss_path = str(FAISS_INDEX_PATH)
         
-        # Use Gemini which is free and healthy
-        llm = ChatGoogleGenerativeAI(
-            model="gemini-1.5-flash",
-            google_api_key=os.getenv("GEMINI_API_KEY"),
-            temperature=0
-        )
+        # Check if we have a pre-built index
+        if (Path(faiss_path) / "index.faiss").exists():
+            try:
+                embeddings = OpenAIEmbeddings(
+                    api_key=os.getenv("OPENAI_API_KEY"),
+                    model="text-embedding-ada-002"
+                )
+                vector_store = FAISS.load_local(
+                    faiss_path, 
+                    embeddings,
+                    allow_dangerous_deserialization=True
+                )
+                print("Loaded existing FAISS index")
+                chain = vector_store  # Mark as loaded
+            except Exception as e:
+                print(f"Could not load FAISS index: {e}")
+                chain = None  # Will use fallback
+        else:
+            print("No FAISS index found - will use direct LLM")
+            chain = None  # Will use fallback
         
-        # Create the retrieval chain
-        prompt = ChatPromptTemplate.from_template("""Answer the following question based on the context:
-
-Context: {context}
-
-Question: {input}
-
-Answer: """)
-        
-        document_chain = create_stuff_documents_chain(llm, prompt)
-        chain = create_retrieval_chain(vector_store.as_retriever(), document_chain)
-        print("RAG system ready!")
+        print("RAG system ready (or using fallback)")
         
     except Exception as e:
         print(f"Error loading RAG system: {e}")
-        raise
+        # Continue without RAG - will use fallback
+        chain = None
 
 # ============================================
 # APPLICATION LAUNCHER (Whitelisted)
@@ -316,15 +309,24 @@ async def rag_query(request: QueryRequest):
     """Query the RAG system"""
     await load_rag_system()
     
-    if chain is None:
-        raise HTTPException(status_code=503, detail="RAG system not initialized")
-    
     try:
-        result = await asyncio.get_event_loop().run_in_executor(
-            None,
-            lambda: chain.invoke({"input": request.query})
-        )
-        return {"response": result.get("answer", str(result))}
+        # Use LLM manager for queries (works even without RAG)
+        llm_mgr = await get_llm_manager()
+        
+        if vector_store is not None:
+            # Try semantic search if vector store is available
+            try:
+                docs = vector_store.similarity_search(request.query, k=3)
+                context = "\n\n".join([d.page_content for d in docs])
+                prompt = f"Based on the following context, answer the question.\n\nContext:\n{context}\n\nQuestion: {request.query}\n\nAnswer:"
+                result = await llm_mgr.generate(prompt)
+                return {"response": result.text}
+            except Exception as e:
+                print(f"Vector search error: {e}")
+        
+        # Fallback to direct LLM query
+        result = await llm_mgr.generate(request.query)
+        return {"response": result.text}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
