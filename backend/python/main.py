@@ -55,10 +55,11 @@ async def load_rag_system():
     
     try:
         from langchain_community.vectorstores.faiss import FAISS
-        from langchain_openai import OpenAIEmbeddings, ChatOpenAI
-        from langchain.chains import RetrievalQAChain
-        
+        from langchain_openai import OpenAIEmbeddings
         from langchain_google_genai import ChatGoogleGenerativeAI
+        from langchain.chains import create_retrieval_chain
+        from langchain.chains.combine_documents import create_stuff_documents_chain
+        from langchain_core.prompts import ChatPromptTemplate
         
         print("Loading FAISS vector store...")
         embeddings = OpenAIEmbeddings(
@@ -73,11 +74,23 @@ async def load_rag_system():
         )
         
         # Use Gemini which is free and healthy
-        chain = RetrievalQAChain.from_llm(model=ChatGoogleGenerativeAI(
+        llm = ChatGoogleGenerativeAI(
             model="gemini-1.5-flash",
             google_api_key=os.getenv("GEMINI_API_KEY"),
             temperature=0
-        ), retriever=vector_store.asRetriever())
+        )
+        
+        # Create the retrieval chain
+        prompt = ChatPromptTemplate.from_template("""Answer the following question based on the context:
+
+Context: {context}
+
+Question: {input}
+
+Answer: """)
+        
+        document_chain = create_stuff_documents_chain(llm, prompt)
+        chain = create_retrieval_chain(vector_store.as_retriever(), document_chain)
         print("RAG system ready!")
         
     except Exception as e:
